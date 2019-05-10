@@ -24,15 +24,15 @@
             pont úgy csinálták meg ahogyan te is, azaz az OO nemhogy nem nehéz, hanem éppen természetes neked!
         </para>  
         <para>
-            Az objektumorientált programozás (OOP) olyan módszert nyújt a programozók számára, 
-            amely lehetővé teszi a programok bonyolultságának csökkentését, a megbízhatóság és a hatékonyság növelését.
-            Objektumokból, tehát a valós világ elemeinek programozási modelljeiből építi fel a programot.
-            A C++ és a Java is objektumorientált programozási nyelv.
+            Az objektumorientált programozás (OOP) gyakorlatilag átalakította a régen ismert programozás fogalmát mivel
+            segít a programkód olvashatóságán megértésén sebességén és megbízhatóságában.
+            Objektumorientált program, objektumokból és osztályokból áll tehát a valós világ elemeinek programozási modelljeiből építi fel a programot.
+            A C++ és a Java és még sok más is objektumorientált programozási nyelv.
         </para>
         <para>
-             A feladatban szereplő polártranszformáció segítségével random számokat tudunk
-            kiszámolni. Maga az algoritmus olyannyira eltrejedt, hogy a Java random szám
-            generátor függvénye is ezt használja.
+             A feladat álltal előírt polártranszformációs algoritmus segítségével random számokat tudunk
+            generálni. Maga az algoritmus annyira eltrejedt, hogy a Java random szám 
+            generátor függvénye (pl: (int)(Math.random()*50+1)) is ezt használja.
         </para>
         <para>Java-ban:</para>
 <para>
@@ -174,16 +174,17 @@ laci@ubuntu:~/Desktop$ ./p
             Megoldás forrása:                
         </para>
         
-            <para> Az LZW algoritmus egy tömörítő eljárás, melyet többek között a </para>
-            <para>a gif formátuma, de sok tömörítő is, mint zip, gzip ezt </para>
-            <para>használja. Az algoritmus lényege annyi, hogy a bemeneti </para>
-            <para>1-ekből és 0-ákból egy bináris fát épít. Mondjuk ezt még nem neveznénk</para>
-            <para>tömörítésnek, tehát most jön a lényeg. Úgy építi fel a fát, hogy</para>
-            <para>mindig ellenőrzi, hogy van-e már 0-ás vagy 1-es gyermek, ha nincs</para>
-            <para>akkor létrehoz egyet, és visszaugrik a gyökérre. Ha van, akkor </para>
-            <para>a 0-és vagy 1-es gyermekre lép, és addig lépked lefele a fában, ameddig</para>
-            <para>nem talál egy olyan részfát, ahol létre kellene hozni egy újy gyermeket,</para>
-            <para>a létrehozás után visszaugrik a gyökérre.</para>
+            <para>Az LZW (Lempel-Ziv-Welch) algoritmus az egy veszteségmentes
+            tömörítő eljárás, melyet Terry Welch publikálta 1984-ben.
+            Maga az algoritmus teljesen elterjedt sok manaságbeli tömörítő használja
+            a formátuma a gif de más tömörítő program is használja mint pl: zip,gzip. 
+			Az algoritmus lényege az hogy a bemeneti egyesekből és nullákból egy bináris fát épít. 
+			Mondjuk ezzel nem érünk el sokat de ezután jön a fontos rész
+            Úgy építi fel a fát, hogy ellenőrzi, hogy van-e már 0-ás vagy 1-es gyermek, ha nincs
+            akkor létrehoz egyet, és visszaugrik a gyökérre. Ha van, akkor 
+            a 0-és vagy 1-es gyermekre lép, és addig halad lefele a fában, ameddig
+            nem talál egy olyan részfát, ahol létre kellene hozni egy új gyermeket,
+            a létrehozás után visszaugrik a gyökérre.</para>
         <para>
         <programlisting language ="c">
             <![CDATA[
@@ -454,11 +455,17 @@ szabadit (BINFA_PTR elem)
         <para>
             Egy fa szerkezetu fajl 3 modon lehet bejarni
             inorder,preorder, es posztorderrel
-            ha van egy egy alap fank mely nel 1 bol jon 2 es 3 es 2 bol jon 4 es 5 ott 
+            ha van egy egy alap fank mely (1,2,3,4,5)
+        </para>
+        <programlisting>
+			<![CDATA[
+			
             Inorder (Left, Root, Right) : 4 2 5 1 3
             Preorder (Root, Left, Right) : 1 2 4 5 3
             Postorder (Left, Right, Root) : 4 5 2 3 1
-        </para>
+            
+            ]]>
+        </programlisting>
         <para>
             Preorder
         </para> 
@@ -991,38 +998,25 @@ szabadit (BINFA_PTR elem)
         <para>
             Megoldás forrása:                
         </para>
-        <para>
-            A bináris fa építését az újonnan létrehozott <prompt>LZWTree</prompt> osztályban szeretnénk megvalósítani.
-            Ide kellene még beágyaznunk a fa csomópontjának ( <prompt>Node</prompt> ) a jellemzését is. 
-            Azért fogjuk beágyazni, mert egyelőre semmilyen különleges szerepet nem kap.
-            Szimplán csak a fa részeként tekintünk rá.
-        </para>
-       
-        <programlisting language = 'c++'><![CDATA[#include <iostream>
-
-class LZWTree
-{
-public:
-    LZWTree (): fa(&gyoker){}
-
-    ~LZWTree ()
-    {
-        szabadit (gyoker.egyesGyermek ());
-        szabadit (gyoker.nullasGyermek ());
-    }
-
-    void operator<<(char b)
+        <programlisting language = "c">
+          <![CDATA[
+            class LZWBinFa
+        {
+        public:
+        LZWBinFa (char b = '/'):betu (b), balNulla (NULL), jobbEgy (NULL) {};
+        ~LZWBinFa () {};
+        void operator<<(char b)
     {
         if (b == '0')
         {
-
-            if (!fa->nullasGyermek ())
+            // van '0'-s gyermeke az aktuális csomópontnak?
+            if (!fa->nullasGyermek ()) // ha nincs, csinálunk
             {
-                Node *uj = new Node ('0');
+                Csomopont *uj = new Csomopont ('0');
                 fa->ujNullasGyermek (uj);
                 fa = &gyoker;
             }
-            else
+            else // ha van, arra lépünk
             {
                 fa = fa->nullasGyermek ();
             }
@@ -1031,7 +1025,7 @@ public:
         {
             if (!fa->egyesGyermek ())
             {
-                Node *uj = new Node ('1');
+                Csomopont *uj = new Csomopont ('1');
                 fa->ujEgyesGyermek (uj);
                 fa = &gyoker;
             }
@@ -1041,120 +1035,58 @@ public:
             }
         }
     }
-    void kiir (void)
-    {
-        melyseg = 0;
-        kiir (&gyoker);
-    }
-    void szabadit (void)
-    {
-        szabadit (gyoker.jobbEgy);
-        szabadit (gyoker.balNulla);
-			}]]></programlisting>  
-				
-            <para>
-            A fa konstruktora és destruktora után az <prompt>LZWTree</prompt> osztályon belül definiáljuk a balra eltoló bitshift operátor 
-            túlterhelését. Ez segíteni fog az inputról érkező karaktereket "beletolni" a <prompt>LZWTree</prompt> objektumba.
-            Így fog felépülni a fa.
-            </para>
-                    
-            <programlisting language = 'c++'><![CDATA[private:
-
-    class Node
+     class Csomopont
     {
     public:
-        Node (char b = '/'):betu (b), balNulla (0), jobbEgy (0) {};
-        ~Node () {};
-        Node *nullasGyermek () {
+        Csomopont (char b = '/'):betu (b), balNulla (0), jobbEgy (0) {};
+        ~Csomopont () {};
+        Csomopont *nullasGyermek () {
             return balNulla;
         }
-        Node *egyesGyermek ()
+        Csomopont *egyesGyermek ()
         {
             return jobbEgy;
         }
-        void ujNullasGyermek (Node * gy)
+        void ujNullasGyermek (Csomopont * gy)
         {
             balNulla = gy;
         }
-        void ujEgyesGyermek (Node * gy)
+        void ujEgyesGyermek (Csomopont * gy)
         {
             jobbEgy = gy;
         }
-        
     private:
-        friend class LZWTree;
+        friend class LZWBinFa;
         char betu;
-        Node *balNulla;
-        Node *jobbEgy;
-        Node (const Node &);
-        Node & operator=(const Node &);
-    };]]></programlisting>
-		
-            <para>
-            Amennyiben paraméter nélküli a <prompt>Node</prompt> konstruktor, akkor az alapértelmezett '/'-jellel fogja azt létrehozni.
-            Egyébként a meghívó karakter kerül a betű helyére. A bal és jobb gyermekekre mutató mutatókat nulára állítjuk.
-            Az aktuális <prompt>Node</prompt> mindig meg tudja mondani, hogy mi a bal illetve jobb gyermeke. Meg is 
-            mondhatjuk neki, hogy melyik csomópont legyen ezentúl az új gyermek. Barátjaként deklaráljuk az <prompt>LZWTree</prompt> 
-            osztályt, hogy az dolgozhasson a csomópontokkal.
-            </para>
-                 
-            <programlisting language = 'c++'><![CDATA[    Node gyoker;
-    Node *fa;
-    int melyseg;
-
-    LZWTree (const LZWTree &);
-    LZWTree & operator=(const LZWTree &);
-
-    void kiir (Node* elem)
-    {
-        if (elem != NULL)
+        Csomopont *balNulla;
+        Csomopont *jobbEgy;
+        Csomopont (const Csomopont &);
+        Csomopont & operator=(const Csomopont &);
+    }; 
+     if (b == '0')
+            {
+            
+            if (!fa->nullasGyermek ()) 
+            {
+                Csomopont *uj = new Csomopont ('0');
+                fa->ujNullasGyermek (uj);
+                fa = &gyoker;
+            }
+  int main ()
+  {
+        char b;
+        LZWBinFa binFa;
+        while (std::cin >> b)
         {
-            ++melyseg;
-            kiir (elem->jobbEgy);
-
-            for (int i = 0; i < melyseg; ++i)
-                std::cout << "---";
-            std::cout << elem->betu << "(" << melyseg - 1 << ")" << std::endl;
-            kiir (elem->balNulla);
-            --melyseg;
-        }
-    }
-    void szabadit (Node * elem)
-    {
-        if (elem != NULL)
-        {
-            szabadit (elem->jobbEgy);
-            szabadit (elem->balNulla);
-            delete elem;
-        }
-    }
-
-};]]></programlisting>
-		
-            <para>
-            Mindig az aktuális csomópontra mutatunk. A <function>kiír</function> függvénnyel jelenítjük meg magát a fát.
-            Felszabadítjuk a két gyermeket, nehogy elfolyjon a memóriánk.
-            </para>
-                    
-            <programlisting language = 'c++'><![CDATA[int
-main ()
-{
-    char b;
-    LZWTree binFa;
-
-    while (std::cin >> b)
-    {
         binFa << b;
-    }
-
+        }
     binFa.kiir ();
     binFa.szabadit ();
-
     return 0;
-}]]></programlisting>
-	
-		<para>Bitenként olvassuk a bemenetet, de a fát már karakterenként építjük fel.</para>
-        
+    }
+          ]]>
+</programlisting>
+       
 	</section>                    
     <section>
         <title>Mutató a gyökér</title>
@@ -1169,17 +1101,63 @@ main ()
             Megoldás forrása:  
         </para>
         <para>
-            Az <classname>LZWBinfa</classname> protected részében megadott gyökeret Csomópont típusról át kell írni Csomópont* típusúra
+            Az LZWBinfa protected részében megadott gyökeret Csomópont -hoz kell írni egy *-ot.
         </para>
         <para>
-            Aztán a konstruktornak nem a gyökeret kell odaadni, hanem ezt a gyökér mutatót, és ezt fogjuk a <varname>fa</varname>-ban tárolni, mint aktuális elem.
+            Aztán a konstruktornak nem a gyökeret kell odaadni, hanem ezt a gyökér mutatót, és ezt fogjuk a fá-ban tárolni, mint aktuális elem.
         </para>
         <para>
-            Ezen módosítások után a program további részeiben le kell cserélnünk azokat a helyeket ahol a gyökér referenciáját vártuk, ugyanis a gyökér mostmár nem egy elem, hanem egy mutató, szóval elegendő a ygökeret odaadnunk.
+            Ezek után le kell cserélni a győkér referenciákat csak simán győkérre mert már nem egy elem hahem egy mutató.
         </para>
-        <para>
-            A program pontosan ugyan úgy fog működni, ha mindent jól csináltunk, mint mielőtt átírtuk, a különbség csupán a feldolgozás elvein és módszerein variál egy picit.
-        </para>
+<programlisting language="c">
+    <![CDATA[ 
+class LZWBinFa
+{
+public:
+    
+   LZWBinFa ():fa (&gyoker)
+    {
+    }
+    ~LZWBinFa ()
+    {
+        szabadit (gyoker.egyesGyermek ());
+        szabadit (gyoker.nullasGyermek ());
+    }
+]]> 
+</programlisting> 
+<programlisting language="c">
+    <![CDATA[ 
+protected:			
+    Csomopont gyoker;
+};
+]]> 
+</programlisting> 
+<programlisting language="c">
+    <![CDATA[ 
+public:
+    
+   LZWBinFa ()
+    {
+		gyoker = new Csomopont();
+		fa = gyoker;
+    }
+    ~LZWBinFa ()
+    {
+		
+        szabadit (gyoker->egyesGyermek ());
+        szabadit (gyoker->nullasGyermek ());
+        delete gyoker;
+    }
+]]> 
+</programlisting> 
+<programlisting language="c">
+    <![CDATA[ 
+protected:			
+    Csomopont *gyoker;
+};
+]]> 
+</programlisting> 
+
     </section>
                   
 
@@ -1197,7 +1175,7 @@ main ()
         </para>
         
         <para>
-            A feladat megvalósításához az osztály elején meg kell adnunk két további publikus függvényt.
+            A feladat megoldásához az osztály elején meg kell adnunk két további publikus függvényt.
         </para>
         <programlisting language="C"><![CDATA[
 LZWBinFa ( LZWBinFa && regi ){

@@ -23,10 +23,10 @@
             </link>.
         </para>
         <para>
-            Számos módon hozhatunk és hozunk létre végtelen ciklusokat. 
-            Vannak esetek, amikor ez a célunk, például egy szerverfolyamat fusson folyamatosan és van amikor egy
-            bug, mert ott lesz végtelen ciklus, ahol nem akartunk. Saját péláinkban ilyen amikor a PageRank algoritmus
-            rázza az 1 liter vizet az internetben, de az iteráció csak nem akar konvergálni...
+            Rengetek fajta végtelen ciklus van.
+            Szükség van rájuk pár fontosabb feladatban mint mondjuk egy szerveren akarunk állapotfolyamatokat 
+			lementeni es csinalunk egy végtelenciklust es beleirjuk hogy mentse le a szerver allapotat + sleep 
+			mondjuk 5 percig maskor meg bugok felvedzése vagy maga a végtelen ciklus a bugos.
         </para>                    
         <para>
             Egy mag 100 százalékban:               
@@ -41,7 +41,7 @@ main ()
 ]]>
         </programlisting>        
         <para>        
-        vagy az olvashatóbb, de a programozók és fordítók (szabványok) között kevésbé hordozható
+        még egy csak mert mért ne
         </para>
         <programlisting language="c"><![CDATA[int
 #include <stdbool.h>
@@ -53,26 +53,11 @@ main ()
 }
 ]]>
         </programlisting>        
-        <para>
-            Azért érdemes a <literal>for(;;)</literal> hagyományos formát használni, 
-            mert ez minden C szabvánnyal lefordul, másrészt
-            a többi programozó azonnal látja, hogy az a végtelen ciklus szándékunk szerint végtelen és nem szoftverhiba. 
-            Mert ugye, ha a <literal>while</literal>-al trükközünk egy nem triviális 
-            <literal>1</literal> vagy <literal>true</literal> feltétellel, akkor ott egy másik, a forrást
-            olvasó programozó nem látja azonnal a szándékunkat.
-        </para>            
-        <para>
-            Egyébként a fordító a <literal>for</literal>-os és 
-            <literal>while</literal>-os ciklusból ugyanazt az assembly kódot fordítja:
-        </para>            
-        <screen><![CDATA[$ gcc -S -o infty-f.S infty-f.c 
-$ gcc -S -o infty-w.S infty-w.c 
-$ diff infty-w.S infty-f.S 
-1c1
-< 	.file	"infty-w.c"
----
-> 	.file	"infty-f.c"
-]]></screen>  
+		<para>
+		    Ajánlott a for(;;) formát használni mert az minden c verzióba lefut és ha valaki más olvassa a programodat
+			akkor látja hogy végtelen ciklust akartál és nem csak elirtad.Érdekesség hogy a fordító a while-t és for-t 
+			ugyanúgy fordítja.
+		</para>
         <para>
             Egy mag 0 százalékban:               
         </para>        
@@ -103,37 +88,6 @@ main ()
 }
 ]]>
         </programlisting>        
-        <para>
-            A <command>gcc infty-f.c -o infty-f -fopenmp</command> parancssorral készítve a futtathatót, majd futtatva,               
-            közben egy másik terminálban a <command>top</command> parancsot kiadva tanulmányozzuk, mennyi CPU-t használunk:            
-        </para>
-        <screen><![CDATA[top - 20:09:06 up  3:35,  1 user,  load average: 5,68, 2,91, 1,38
-Tasks: 329 total,   2 running, 256 sleeping,   0 stopped,   1 zombie
-%Cpu0 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu1 : 99,7 us, 0,3 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu2 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu3 : 99,7 us, 0,3 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu4 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu5 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu6 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-%Cpu7 :100,0 us, 0,0 sy, 0,0 ni, 0,0 id, 0,0 wa, 0,0 hi, 0,0 si, 0,0 st
-KiB Mem :16373532 total,11701240 free, 2254256 used, 2418036 buff/cache
-KiB Swap:16724988 total,16724988 free,       0 used. 13751608 avail Mem 
-
-  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND     
- 5850 batfai    20   0   68360    932    836 R 798,3  0,0   8:14.23 infty-f     
-]]></screen>  
-                                
-        <tip>
-            <title>Werkfilm</title>
-            <itemizedlist>
-                <listitem>
-                    <para>
-                        <link xlink:href="https://youtu.be/lvmi6tyz-nI">https://youtu.be/lvmi6tyz-nI</link>
-                    </para>    
-                </listitem>                
-            </itemizedlist>                
-        </tip>
     </section>        
         
     <section>
@@ -220,12 +174,10 @@ false]]></screen>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
         </para>
-        <para>
-				A feladatnak nincs megoldása mivel:
-				Ha a vizsgált program tartalmaz végtelen ciklust:
-				 <function>Lefagy</function>=true és <function>Lefagy2</function>szintén true lesz.
-				 Ha a vizsgált program nem tartalmaz végtelen ciklust:
-				 <function>Lefagy</function>=false=><function>Lefagy2</function>=végtelen ciklus lesz.
+		<para>
+			A feladatnak nincs megoldása mert: ha a program tartalmaz végtelen ciklus akkor lefagy = true
+			és akkor lefagy2 is true lesz ha meg a programban nincs végtelen ciklus akkor lefagy = false és akkor
+			lefagy 2 egy végtelen ciklussá alakul át.
 		</para>
     </section>        
                 
@@ -329,6 +281,7 @@ false]]></screen>
 			</para>
 			<para>
 				Tanulságok, tapasztalatok, magyarázat...
+				Egy alap program amiben a terminálban egy "o" betűt pattogtat while ciklussal.
 			</para>
 		</section>                                       
 
@@ -351,6 +304,11 @@ false]]></screen>
         <para>
             Tanulságok, tapasztalatok, magyarázat... 
         </para>
+		<para>
+			MIPS az egy rövidétes teljes valójába Millions of Instructions Per Second ami annyit tesz ki milliónyi utasítások/másodperc.
+			Múködése mögött a titok hogy van egy ciklus amit úgy kalibrál be a program hogy folyamatosan menjen bármi féle akadás nélkül
+			es ezzel a processor sebességéhez igazodik.
+		</para>
         <para>
 				<programlisting language="c">
 					<![CDATA[
@@ -395,27 +353,6 @@ false]]></screen>
 			]]>
 		</programlisting>
 		</para>
-		<para>
-		
-		<programlisting language="R"><![CDATA[
-	library(matlab)
-	stp <- function(x){
-		primes = primes(x)
-		diff = primes[2:length(primes)]-primes[1:length(primes)-1]
-		idx = which(diff==2)
-		t1primes = primes[idx]
-		t2primes = primes[idx]+2
-		rt1plust2 = 1/t1primes+1/t2primes
-		return(sum(rt1plust2))
-	}
-
-	x=seq(13, 1000000, by=10000)
-	y=sapply(x, FUN = stp)
-	plot(x,y,type="b")]]>
-		</programlisting>
-		
-
-		</para>
     </section>                     
 
     <section>
@@ -433,12 +370,12 @@ false]]></screen>
 			<para>
 				Tanulságok, tapasztalatok, magyarázat...
 				A PageRank képlete: PR(A) = (1-d) + d (PR(T1)/C(T1) + ... + PR(Tn)/C(Tn))
-				A: az „A” oldal, vagyis az aktuális oldal
-				T: azon oldalak, amelyek az „A” oldalra mutató linkkel rendelkeznek
-				PR(A): az „A” oldal PageRank száma
-				PR(Tn): azon oldalak PageRank száma, amelyek az „A” oldalra mutatnak
-				C(Tn): a „T” oldalakon található összes link, melyek az „A” oldalra mutatnak
-				d: damping factor, avagy csillapító tényező, amely 0 és 1 közé esik
+				A: az aktuális oldal
+				T: oldalak amik az a-ra hoz vannak linkelve
+				PR(A): a oldal pagerank száma
+				PR(Tn): azok oldalak pagerank száma amik az a-ra mutatnak
+				C(Tn): t oldalon az összes link ami a-ra mutatnak
+				d: 0 és 1 közé esik
 
 			</para>
 			<programlisting language="c"> <![CDATA[
@@ -551,7 +488,7 @@ false]]></screen>
 				Egy for ciklussal végigmegyünk a kisérletek száman és megnézzuk hogy eltalálta-e az eredményt.
 			   Ha nem találta el, a műsorvezető kap pontot.
 			   Ha nyer, kiértékeljuk hogy hányszor nyert volna változtatás nélkül. Egyéb esetekben változtatással nyert volna.  
-	Megszámoljuk a vektorokon az eseményeket majd kiiratjuk az eredményeket..
+				Megszámoljuk a vektorokon az eseményeket majd kiiratjuk az eredményeket..
 			</para>
 		</section>
 
@@ -808,4 +745,4 @@ plot(x,y,type="b")]]>
         </tip>
     </section>
 
-</chapter>                
+</chapter>

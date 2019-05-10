@@ -1,4 +1,4 @@
-<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+﻿<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
     <info>
         <title>Helló, Caesar!</title>
         <keywordset>
@@ -22,10 +22,10 @@
             </link> 
         </para>
         <para>
-            A mátrixok m darab sorral és n darab oszloppal rendelkező táblázatok. Akkor beszélünk háromszögmátrixról, ha a négyzetes mátrix (sorok és oszlopok száma megegyezik) főátlója alatt vagy felett csupa 0 elem található.
-            Az alsó háromszögmátrix elemeit sorfolytonosan bejárva el tudjuk helyezni egy tömbben, az így kapott elemek száma n(n+1)/2 lesz.
-            Jelen esetben 3 sorral (a programban nr változó tárolja) fogunk dolgozni, tehát az elemek száma 6.
-            A <function>malloc</function> függvény képes lefoglalni a dinamikus területen egy, a paramétereként kapott méretű területet.
+            Ahhoz hogy megértsük a feladatot kell tudnunk mi az a Mátrix.A mátrixoknak 2 attributumjuk van hány sora és hány oszlopa van.
+            Egy t sorból és y oszlopból álló mátrixot txy mátrixnak neveznek.Most már tudjuk mi az a mátrix de mi a háromszögmátrix?
+            A háromszögmátrix az egy négyzet mátrix melyen a sorai és oszlopainak a száma megegyezik és a főátló alatt vagy felett csak 0 van.
+            Ebben a feladatban 3 sorunk lesz igy 6 db elemünk lesz.A <function>malloc</function> függvény képes lefoglalni a dinamikus területen egy, a paramétereként kapott méretű területet.
             Ezt követően vagy a lefoglalt terület kezdőcímét, vagy NULL-t ad vissza (hiba esetén).
             A man 3 malloc parancs terminálba való beírásával megkaphatjuk a függvény pontos szintaktikai leírását.
             Egyetlen paramétere (size_t size) azt mondja meg, hogy hány bájtot szeretnénk a memóriában lefoglalni.
@@ -38,14 +38,18 @@
 int
 main ()
 {
-    int nr = 5;
+    int nr = 5; //hány sor legyen a kiadott 3 szög
     double **tm;
-
+    
+    printf("%p\n", &tm); //memória foglalás kiiratása
+    
     if ((tm = (double **) malloc (nr * sizeof (double *))) == NULL)
     {
         return -1;
     }
 
+    printf("%p\n", tm); //memória foglalás kiiratása
+    
     for (int i = 0; i < nr; ++i)
     {
         if ((tm[i] = (double *) malloc ((i + 1) * sizeof (double))) == NULL)
@@ -55,11 +59,13 @@ main ()
 
     }
 
-    for (int i = 0; i < nr; ++i)
+    printf("%p\n", tm[0]);    //memória foglalás kiiratása
+    
+    for (int i = 0; i < nr; ++i) 
         for (int j = 0; j < i + 1; ++j)
             tm[i][j] = i * (i + 1) / 2 + j;
 
-    for (int i = 0; i < nr; ++i)
+    for (int i = 0; i < nr; ++i) //1. háromszög
     {
         for (int j = 0; j < i + 1; ++j)
             printf ("%f, ", tm[i][j]);
@@ -71,7 +77,7 @@ main ()
     *(tm[3] + 2) = 44.0;
     *(*(tm + 3) + 3) = 45.0;
 
-    for (int i = 0; i < nr; ++i)
+    for (int i = 0; i < nr; ++i) //1. háromszög
     {
         for (int j = 0; j < i + 1; ++j)
             printf ("%f, ", tm[i][j]);
@@ -84,7 +90,87 @@ main ()
     free (tm);
 
     return 0;
+}
+
 }]]></programlisting>
+<para>
+    BINFA Struktúrával:
+    </para>
+        <programlisting>
+            <![CDATA[
+            #include <stdio.h>
+#include <stdlib.h>
+
+typedef struct binfa
+{
+  int ertek;
+  struct binfa *bal_nulla;
+  struct binfa *jobb_egy;
+
+} BINFA, *BINFA_PTR;
+
+BINFA_PTR
+uj_elem ()
+{
+  BINFA_PTR p;
+
+  if ((p = (BINFA_PTR) malloc (sizeof (BINFA))) == NULL)
+    {
+      perror ("memoria");
+      exit (EXIT_FAILURE);
+    }
+  return p;
+}
+
+int
+main ()
+{
+    int nr = 5;
+    BINFA **tm;
+    
+    
+    if ((tm = (BINFA **) malloc (nr * sizeof (BINFA *))) == NULL)
+    {
+        return -1;
+    }
+    
+    for (int i = 0; i < nr; ++i)
+    {
+        if ((tm[i] = (BINFA *) malloc ((i + 1) * sizeof (BINFA))) == NULL)
+        {
+            return -1;
+        }
+
+    }
+    
+    for (int i = 0; i < nr; ++i)
+        for (int j = 0; j < i + 1; ++j)
+            tm[i][j].ertek = i * (i + 1) / 2 + j;
+
+    for (int i = 0; i < nr; ++i)
+    {
+        for (int j = 0; j < i + 1; ++j)
+            printf ("%d, ", tm[i][j].ertek);
+        printf ("\n");
+    }
+
+   
+    for (int i = 0; i < nr; ++i)
+    {
+        for (int j = 0; j < i + 1; ++j)
+            printf ("%d, ", tm[i][j].ertek);
+        printf ("\n");
+    }
+
+    for (int i = 0; i < nr; ++i)
+        free (tm[i]);
+
+    free (tm);
+
+    return 0;
+}
+            ]]>
+        </programlisting>
         <figure>
             <title>A <type>double **</type> háromszögmátrix a memóriában</title>
             <mediaobject>
@@ -112,15 +198,15 @@ main ()
             Megoldás forrása: A feladat megoldásához az udprog repository-t használtam          
         </para>
         <para>
-            Ebben a feladatban egy bementi szöveg titkosítására fog sor kerülni.
-            Ez úgy fog zajlani, hogy a programunk bemenete egy tiszta szöveg lesz, a programban lezajlik a titkosítás,
-            a titkosított szöveget pedig egy szövegfájlba kiírja.
-            A titkosítás módja az EXOR logikai művelet
+            Ez a feladat titkositásról lesz szó.
+            Ez úgy fut le hogy megadunk egy "tiszta szöveget" és ez a program átkódolja egy olvashatatlan fájlá.
+            Futtatásához meg kell adnunk egy tiszta szöveget nevét és a cél fájl nevét és tipusát.
+            A titkosítás módja az EXOR logikai művelet.
         </para>      
         <para>
             A program futtatásához ezt a paracsot kell hasznalni:
-            ./e 56789012  tiszta.txt titkos.szoveg 
-             more titkos.szoveg 
+            ./e 56789012  asd.txt asd.szoveg 
+             more asd.szoveg 
         </para>
         <programlisting language="c">
 <![CDATA[
@@ -174,9 +260,9 @@ main (int argc, char **argv)
             Megoldás forrása: <link xlink:href="https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/ch01.html#exor_titkosito">https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/ch01.html#exor_titkosito</link>               
         </para>
         <para>
-            Az előző feladathoz hasonlóan titkosítanunk kell egy tiszta szöveget kizáró vagy algoritmussal (EXOR), azonban ezúttal Java környezetben.
-A <filename>Titkosito.java</filename> fájlban a külső while ciklus tömbönként addig olvassa a terminálba beírt tiszta szövegünket. 
-A belső for ciklusban helyezzük rá a kulcsot a beolvasott szövegre a kulcsIndex változó segítségével, majd végrehajtjuk a kizáró vagy műveletet. 
+            Mint az előző feladatban megint az a feladatunk hogy egy szöveges fájlt titkositsunk az EXOR algoritmussal , azonban most Java környezetben.
+A <filename>Titkosito.java</filename> mint az előző feladatban meg kell adnunk egy tiszta szöveget csak most be kell gépelnünk konzolba ezt a kulso while függvény olvassa. 
+A belső for ciklusban húzzuk rá a szövegre a kulcsot kulcsIndex változó segítségével, majd program átkódolja a beirt szövegünket. 
 Az eredmény a buffer tömbben keletkezik, amit végül a kimenetre írunk.
 
         </para> 
@@ -272,9 +358,7 @@ public class Titkosito {
 </programlisting>
 		</para>
 <para>
-A fordítás és a futtatás is hasonlóképp zajlik, mint C környezetben.
-Ezúttal azonban nem txt fájlban fogjuk tárolni a tiszta szövegünket, hanem a kulcs megadása után (jelen esetben ez a <filename>pelda</filename> lenne) írjuk a terminálba soronként a titkosításra váró csipetet.
-Ctrl+D billentyűkombináció lenyomásáig a terminál várni fogja az inputot, tehát tetszőleges hosszúságú szöveget tudunk írni.
+Futtatása:
 </para>
 <programlisting><![CDATA[
 $ javac Titkosito.java
@@ -283,8 +367,8 @@ első sor
 második sor]]>
 </programlisting>
 <para>
-A szöveg titkosítva lett, dekódolni hasonló paranccsal tudunk, azonban figyeljünk arra, hogy ezúttal ellentétes relációjelet kell használnunk.
-Ekkor outputként megkapjuk az eredeti, jól értelmezhető szöveget.
+A szöveg titkosítva lett, dekódolni hasonló paranccsal tudunk, azonban figyeljünk arra, hogy ezúttal a kacsacsőrnek balra kell mutatnia.
+Ezek után outputként megkapjuk az eredeti, jól értelmezhető szöveget.
 </para>
 <programlisting><![CDATA[
 $ java Titkosito pelda < titkositott.szoveg
@@ -304,15 +388,18 @@ második sor]]>
             Megoldás forrása: https://www.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_01_parhuzamos_prog_linux/ch05s02.html         
         </para>
         <para>
-             Feladatunk az előbbi feladatban előállított EXOR titkosító program használatával titkosított szöveg
-        visszaállítása eredeti állapotba. A lényeg viszont, hogy fogalmunk sincs a kulcsról. Annyit tudunk róla, hogy maximum hány karakterből
-        állhat, illetve mik is azok a karakterek.
+             Feladatunk most hogy az előző feladatokban titkositott szövegeket visszadekódoljuk úgy hogy nem tudjuk az exor
+             kulcsát csak azt tudjuk hogy a kulcs 8 karakter hosszú és csak számokat tartalmaz.
         </para>  
         <para>
         Futtatási parancs:
-        [norbert@matrica exor]$ gcc t.c -o t -std=c99 
-        [norbert@matrica exor]$ time ./t titkos.szoveg |grep 56789012
         </para>
+        <programlisting>
+            <![CDATA[
+            $ gcc t.c -o t -std=c99 
+            $ ./t titkos.szoveg |grep 12344567
+            ]]>
+        </programlisting>
 		<para>
         <programlisting language="c">
 <![CDATA[
@@ -523,7 +610,7 @@ compute(nn.exor, exor.data[,1:2])]]>
             Megoldás forrása:                
         </para>
         <para>
-            Tanulságok, tapasztalatok, magyarázat...
+            Erre a feladatra felhasználnám az egyik passzomat amit SMNISTforHUMANS lvl9 eléréséért kaptam.
         </para>
         <para>
             Hiba-visszaterjesztést a többrétegű perceptronoknál alkalmazunk(MLP), amelyek tartalmaznak rejtett rétegeket is.

@@ -14,7 +14,7 @@
             Megoldás forrása: <link xlink:href="https://github.com/lacikaq9/2.fejezet/blob/master/turinggep.cpp">link</link>               
         </para>
 			<para>Tanulságok, tapasztalatok, magyarázat...</para>
-            <para>Turing gép fogalmát  Alan Turing angol matematikus dolgozta ki 1936-ban jelent meg.</para>
+            <para>Turing gép atyja angol származása Alan Turing matematikus az 1936 évekbe megjelent cikkében már elkezdte a turring gép alapjait.</para>
             <para>Turing a számítógépek fejlesztésének máig tartó folyamatát inditoták el.</para>
             <para>A Turing-gépúgynevezett absztakt automata.</para>
             <para>Létrehozunk egy main fügvényt benne pedig két db int tipusú váltózot az egyik neve b ebben fogom tárolni a számot.</para>
@@ -23,6 +23,31 @@
             <para>Cout kiíratunk  mondatokat.Lérte kell hozni egy forciklust ami anyiszor fog lefutni ahány értéket megadtunk a b váltózoban.</para>
             <para>cout kirtunk 1 -eseket és megszámlojuk b értéket és ha 5 egyes van akkor tesz egy szóközt a program. </para>
             <para>A program végén pedig ki íratjuk az egyeseket.</para>
+            <programlisting>
+				<![CDATA[[
+				#include <iostream>
+using namespace std;
+
+int main()
+{
+	int b;
+	int szamlalo = 0;
+	cout<<"Add meg egy decimalis szamot!\n";
+	cin >> b;
+	cout<<"Unárisban:\n";
+	for (int i = 0; i < b; ++i)
+	{
+		cout<<"1";
+		++szamlalo;
+		if (szamlalo % 5 == 0) 
+		cout<<" ";
+	}
+	cout<<'\n';
+	return 0;
+}
+
+				]]>
+            </programlisting>
     </section>        
         
     <section>
@@ -111,13 +136,27 @@ aaaabbbbcccc
             Megoldás forrása:  <link xlink:href="https://github.com/lacikaq9/2.fejezet/blob/master/c89nem.cpp">link</link>
         </para>
         <para>
-            Tanulságok, tapasztalatok, magyarázat...
+            Könyv fogalma:
             A c program nyelv különbséget tesz az utasítások és a definiciók közöt,
             hogy az utasítás csak végrehajtható kódot táról, ezzel szemben a definíció azonosítót generál. 
-            Ez a hello world program nem fordul le c89-es fordítóval  mert nem szereti a komenteket.
-            De már a c99-es fordítóval simán lefordul. 
-
         </para>
+        <para>
+			Program nyelveket nem hiába nevezzük "nyelvnek" mert olyan mint egy normális nyelv fejlődik új funkciókat
+			tulajdonságokat kap mint ebbe a feladatban is.c89 és a c99 verziók is ilyenek.Ez a példaprogram azért nem fut
+			le c89-be mert c99-ben implementálták a kommenteket így c89 nem ismeri fel így hát hibaüzenetet dob be.
+		</para>
+		<programlisting>
+			<![CDATA[[
+			#include <stdio.h>
+
+    int main ()
+    {
+      // Print string to screen.
+      printf ("Hello World\n");
+        return 0;
+    }
+			]]>
+		</programlisting>
     </section>                     
 
     <section>
@@ -140,6 +179,25 @@ aaaabbbbcccc
             A kód a szamok_szama változóba számolja a számokat. 
             Ahhoz, hogy kiírja a számok számát, a Ctrl+D billentyűkombinációt kell használnunk.
         </para>
+        <programlisting>
+			<![CDATA[
+			#include <string.h>
+int szamok_szama = 0;
+%}
+%%
+
+[0-9]+		++szamok_szama;
+[a-zA-Z][a-zA-Z0-9]*	;                          
+			
+%%
+int
+main()
+{
+yylex();
+printf("%d szam\n", szamok_szama);
+return 0;
+			]]>
+        </programlisting>
     </section>                     
 
     <section>
@@ -191,7 +249,7 @@ aaaabbbbcccc
             <listitem>                                    
                 <programlisting><![CDATA[for(i=0; i<5; ++i)]]></programlisting> 
                 <para>
-                 for ciklus ami 0-tól indul 5-ig megy és az  i értékét növeli egyel az összes iterációban ezt a ++i prefixnek nevezük.
+                 for ciklus ami 0-tól indul 5-ig megy és az i értékét növeli egyel az összes iterációban ezt a ++i prefixnek nevezük.
                 </para>           
             </listitem>
             <listitem>                                    
@@ -205,8 +263,8 @@ aaaabbbbcccc
             <listitem>                                    
                 <programlisting><![CDATA[for(i=0; i<5; tomb[i] = i++)]]></programlisting> 
                 <para>
-                 for ciklus ami 0-tól indul 5-ig tomb i-edik eleméhez hozzárendeli i-t majd növeli egyel  az i értékét.
-                 De a tomb[i] = i++ kifejezés hibát fog ki írni mert a végrehajtás sorendje nem megfelelő ,ha más fordítóprogramot használunk akkor kahtunk  más eredményeket.
+                 for ciklus ami 0-tól indul 5-ig megy és tomb i-edik elemét felülírja az i++ értékére.
+                 De ez a ciklus hibát fog kiadni.
                 </para>           
             </listitem>
             <listitem>                                    
@@ -320,25 +378,25 @@ $(\exists y \forall x (y<x) \supset \neg (x \text{ prím}))$
             <listitem>
                 <programlisting><![CDATA[int &r = a;]]></programlisting>            
                 <para>
-                    Egész történő referencia.
+                    Egészre történő referencia.
                 </para>
             </listitem>
             <listitem>
                 <programlisting><![CDATA[int c[5];]]></programlisting>            
                 <para>
-                    Egészek tömbje.
+                    Egész tömb.
                 </para>
             </listitem>
             <listitem>
                 <programlisting><![CDATA[int (&tr)[5] = c;]]></programlisting>            
                 <para>
-                    Egészek tömbjére történő hivatkozás.
+                    Egész tömbre történő hivatkozás.
                 </para>
             </listitem>
             <listitem>
                 <programlisting><![CDATA[int *d[5];]]></programlisting>            
                 <para>
-                    Egészek tömbjére mutató mutató.
+                    Egész tömbre mutató mutató.
                 </para>
             </listitem>
             <listitem>
