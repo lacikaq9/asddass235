@@ -228,24 +228,28 @@ false]]></screen>
 				pattogtatás alatt, alább láthatod a videókon.)
 			</para>
 			<para>
+				A bitzero megnezi mekkora az ablakunk.
+				A void rajzol vár két bemenetet amivel állítgatja a magasságot és a szélességet gyakorlatilag ez rajzolja az O-t.
+				A main-be jön egy clear parancs ami megtisztítja a terminál ablakot.A vx és vy változókkal és a bitzero-ba kapott számokkal számoljuk ki 					az O pozícióját	számolja.Usleep pedig hogy ne pattogjon túl gyorsan Sleep és a Usleep közötti különbség a Usleep microsecond-ba kéri az 				időt Sleep másodpercbe.
+			</para>
+			<para>
 				Megoldás videó: <link xlink:href="https://bhaxor.blog.hu/2018/08/28/labdapattogas">https://bhaxor.blog.hu/2018/08/28/labdapattogas</link>
 			</para>
 			<para>
 			<programlisting language="c">
 					<![CDATA[  
 		#include <stdio.h>
-	#include <stdlib.h>
-
-	char bitzero(char x) {
+		#include <stdlib.h>
+		char bitzero(char x) {
 		int i;
 		char bitt = x&0x1;
 		for (i=0; i<8; i++) {
-			bitt |= (x>>i)&1;
+		bitt |= (x>>i)&1;
 		}
 		return 1-bitt;
-	}
+		}		
 
-	void rajzol(char width, char height) {
+		void rajzol(char width, char height) {
 		int i;
 		/*magasság*/
 		for (i=1; i<=height; i++) {
@@ -312,44 +316,13 @@ false]]></screen>
         <para>
 				<programlisting language="c">
 					<![CDATA[
-			#include <time.h>
-	#include <stdio.h>
-
-	void
-	delay (unsigned long long loops)
-	{
-	  for (unsigned long long i = 0; i < loops; i++);
-	}
-
-	int
-	main (void)
-	{
-	  unsigned long long loops_per_sec = 1;
-	  unsigned long long ticks;
-
-	  printf ("Calibrating delay loop..");
-	  fflush (stdout);
-
-	  while ((loops_per_sec <<= 1))
-		{
-		  ticks = clock ();
-		  delay (loops_per_sec);
-		  ticks = clock () - ticks;
-
-		  if (ticks >= CLOCKS_PER_SEC)
-		{
-		  loops_per_sec = (loops_per_sec / ticks) * CLOCKS_PER_SEC;
-
-		  printf ("ok - %llu.%02llu BogoMIPS\n", loops_per_sec / 500000,
-			  (loops_per_sec / 5000) % 100);
-
-		  return 0;
-		}
-		}
-
-	  printf ("failed\n");
-	  return -1;
-	}
+			int a = 1; //kettes számrendszerben: 00000000 00000000 00000000 00000001
+                	while (a != 0){
+                   	 a << = 1; //itt léptetjük eggyel:00000000 00000000 00000000 00000010
+                              // újra: 00000000 00000000 00000000 00000100
+                              //...
+                }
+}
 			]]>
 		</programlisting>
 		</para>
@@ -377,6 +350,9 @@ false]]></screen>
 				C(Tn): t oldalon az összes link ami a-ra mutatnak
 				d: 0 és 1 közé esik
 
+			</para>
+			<para>
+				Elsőnek is a kapcsolatokat a mátrixba tároljuk.Sorok és oszlopok metszetébe láthatjuk milyen kapcsolat van az oldalak között.Ezt a 					mátrixot adjuk a pagerank() - nak függvénynek.A tömbben tároljuk az oldalak értékét, és a PR-ben tároljuk el a mátrixszorzás eredményét. 					A mátrixszorzást a L és PRv tömbökkel hajtjuk végre. Ezek a tömbök összeszorzásával kapunk egy 4x1 oszlopvektort ami a 4 oldalunk 					pagerankja lesz.
 			</para>
 			<programlisting language="c"> <![CDATA[
 				#include <stdio.h>

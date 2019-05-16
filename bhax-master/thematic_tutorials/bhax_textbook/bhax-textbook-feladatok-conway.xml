@@ -386,6 +386,9 @@ $ java Sejtautomata]]>
         </para> 
         <para>
             A szabály implementálása ugyanúgy mint javaban:
+             sejt túléli a kört, ha két vagy három szomszédja van.
+            A sejt elpusztul, ha kettőnél kevesebb (elszigetelődés), vagy háromnál több (túlnépesedés) szomszédja van.
+            Új sejt születik minden olyan cellában, melynek környezetében pontosan három sejt található.
         </para>
         <programlisting language="c++"><![CDATA[
 void SejtSzal::idoFejlodes() {
@@ -412,6 +415,14 @@ void SejtSzal::idoFejlodes() {
     racsIndex = (racsIndex+1)%2;
 }
 ]]></programlisting> 
+<para>
+			Magát a konkrét szabályokat az idoFejlodes
+            eljárás tartatja be, itt dől el, hogy egy sejt milyen állapotba
+            kerül. Elsőnek meghatározzuk, hogy melyik rácsból váltunk melyikbe. Majd
+            ezalapján a racsUtana rácsba betöltjük a sejtállapotokat. 
+            Ahhoz, hogy ezt megtegyük, tudnunk kell, hogy az egyes sejteknek a racsElotte
+            rácsban milyen szomszédai voltak. Ehhez meghívjuk az imént taglalt szomszedokSzama függvényt.
+</para>
 <para>Sikló:</para>   
          <programlisting language="c++"><![CDATA[
 void SejtAblak::siklo(bool **racs, int x, int y) {
@@ -483,6 +494,9 @@ void SejtAblak::sikloKilovo(bool **racs, int x, int y) {
   
 }
 ]]></programlisting> 
+<para>      A siklokilovo függvény pedig 
+            élőre állítja racs mutató által mutatott rács
+            megfelelő tagjait.</para>
 <programlisting language="c++"><![CDATA[
 #include <QApplication>
 #include "sejtablak.h"

@@ -179,23 +179,32 @@ aaaabbbbcccc
             A kód a szamok_szama változóba számolja a számokat. 
             Ahhoz, hogy kiírja a számok számát, a Ctrl+D billentyűkombinációt kell használnunk.
         </para>
+	<para>
+	    Lex forráskód 3 részből áll, az első a definíciós rész, amely lényegében bármilyen
+            C forrást tartalmazhat. A második rész a szabályoknak van fennttartva. Ez 2 részből áll, reguláris kifejezésekből, 
+	    és az azokhoz tartozó C utasításokból.
+            Tehát, ha a program futása során a bemenetként kapott string illeszkedik valamelyik reguláris kifejezésre,
+            akkor végrehajtja a hozzá tartozó utasítást. A harmadik rész pedig egy C-kód, amely lényegében a
+            a lexikális elemzőt hívja meg.
+	</para>
         <programlisting>
 			<![CDATA[
-			#include <string.h>
-int szamok_szama = 0;
+			%{
+#include <stdio.h>
+int realnumbers = 0;
 %}
+digit	[0-9]
 %%
-
-[0-9]+		++szamok_szama;
-[a-zA-Z][a-zA-Z0-9]*	;                          
-			
+{digit}*(\.{digit}+)?	{++realnumbers; 
+    printf("[realnum=%s %f]", yytext, atof(yytext));}
 %%
 int
-main()
+main ()
 {
-yylex();
-printf("%d szam\n", szamok_szama);
-return 0;
+ yylex ();
+ printf("The number of real numbers is %d\n", realnumbers);
+ return 0;
+}
 			]]>
         </programlisting>
     </section>                     
@@ -212,12 +221,15 @@ return 0;
             Megoldás forrása: <link xlink:href="https://github.com/lacikaq9/2.fejezet/blob/master/l33t.c">link</link>
         </para>
             <para>Tanulságok, tapasztalatok, magyarázat...</para>
-            <para>Ezt hackerek/crackerekáltal használt nyelv.</para>
-            <para>A program kap egy szöveget melyet l33t tipusu szovegge konvertálja át.</para>
+            <para>Elsőnek nézzük meg, hogy mi is az a leet nyelv. Ennek a nyelvnek az a lényege, hogy a 
+            szavakban lévő bizonyos betűket, számokkal, vagy egyéb más karakterekkel helyettesítjük. Az egyes
+            betűket közmegállapodás szerinti karakterekre cserélhetjük. Erről a teljes listát google-ön megtalálod. 
+            </para>
             <para>A program forditasa</para>
 			<para>lex -o l337d1c7.c l337d1c7.l</para>
 			<para>gcc l337d1c7.c -o l337d1c7 -lfl</para>
 			<para>./l337d1c7]|]></para>
+	
     </section>                     
 
 
@@ -256,7 +268,7 @@ return 0;
                 <programlisting><![CDATA[for(i=0; i<5; i++)]]></programlisting>
                 <para>
                  for ciklus ami 0-tól indul 5-ig megy és az  i értékét növeli egyel az összes iterációban ezt a i++ postfixnek nevezük. 
-                 Ez a külömbség a két csipet között.
+                 Ez a külömbség a két csipet között.Ám 
                 </para>
             
             </listitem>
@@ -273,8 +285,8 @@ return 0;
             </listitem>
             <listitem>                                    
                 <programlisting><![CDATA[printf("%d %d", f(a, ++a), f(++a, a));]]></programlisting>
-                <para>A printf kíratást jelent c nyelven.Itt konkrétan  két db decimális  számértéket iratunk ki .Ez a "%d %d"
-                      Utána  f(a, ++a), f(++a, a) fügvények adnak vissza,de a rossz sorrend miatt hibát kapunk.</para>            
+                <para>Ez is hibás kód, mivel az f függvény két int-et kap, de azok
+            kiértékelésének sorrendje nincs meghatározva.</para>            
             </listitem>
             <listitem>                                    
                 <programlisting><![CDATA[printf("%d %d", f(a), a);]]></programlisting>    
@@ -424,12 +436,70 @@ $(\exists y \forall x (y<x) \supset \neg (x \text{ prím}))$
                 </para>
             </listitem>            
         </itemizedlist>       
-       
+       	<programlisting>
+	<![CDATA[
+	#include <iostream>
+int* fakt(int szam){
+    static int a = 1;
+    if (szam < 2)
+        return &a;
+    while (szam>1){
+        a = a*szam;
+        --szam;
+    }
+    return &a;
+}
+
+int* sum(int egyik, int masik){
+    static int sum = egyik + masik;
+    return &sum;
+}
+
+int szorzat(int egyik, int masik){
+    return egyik*masik;
+}
+
+int osztas(int egyik, int masik){
+        return egyik/masik;
+}
+
+int (*pfgv (int a)) (int,int){
+    if (a){
+        return &szorzat;
+    }
+    else
+        return &osztas;
+}
+
+int main()
+{
+    int a = 10;
+    int b = 5;
+    int* pa = &a;
+    int& ra = a;
+    int tomb[a];
+    int(& rtomb)[a] = tomb;
+    int* ptomb[2];
+    ptomb[0] = &a;
+    ptomb[1] = &b;
+    int* fakt_a = fakt(a);
+    int*(*psum)(int,int) = &sum;
+    int (*(*p_pfgv) (int valami))(int, int) = &pfgv;
+    std::cout<<"a és b szorzata "<<(pfgv(1))(a,b)<<std::endl;
+    std::cout<<"a és b hányadosa "<<(pfgv(0))(a,b)<<std::endl;
+    std::cout<<"a és b hányadosa "<<(p_pfgv(0))(a,b)<<std::endl;
+    //int* pfakt_b = (*pfakt)(b);
+    std::cout<<"a értéke "<<a<<'\t'<<"a! értékes "<<*fakt_a<<std::endl;
+    std::cout<<"a és b összege "<<*psum(a,b)<<std::endl;
+}
+
+	]]>
+	</programlisting>
         <para>
             Megoldás videó: 
         </para>
         <para>
-            Megoldás forrása:  <link xlink:href="https://github.com/lacikaq9/2.fejezet/blob/master/valt.cpp">link</link>
+            Megoldás forrása:  <link xlink:href="">link</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...

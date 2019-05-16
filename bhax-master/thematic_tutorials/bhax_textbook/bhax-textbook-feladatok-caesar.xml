@@ -93,84 +93,6 @@ main ()
 }
 
 }]]></programlisting>
-<para>
-    BINFA Struktúrával:
-    </para>
-        <programlisting>
-            <![CDATA[
-            #include <stdio.h>
-#include <stdlib.h>
-
-typedef struct binfa
-{
-  int ertek;
-  struct binfa *bal_nulla;
-  struct binfa *jobb_egy;
-
-} BINFA, *BINFA_PTR;
-
-BINFA_PTR
-uj_elem ()
-{
-  BINFA_PTR p;
-
-  if ((p = (BINFA_PTR) malloc (sizeof (BINFA))) == NULL)
-    {
-      perror ("memoria");
-      exit (EXIT_FAILURE);
-    }
-  return p;
-}
-
-int
-main ()
-{
-    int nr = 5;
-    BINFA **tm;
-    
-    
-    if ((tm = (BINFA **) malloc (nr * sizeof (BINFA *))) == NULL)
-    {
-        return -1;
-    }
-    
-    for (int i = 0; i < nr; ++i)
-    {
-        if ((tm[i] = (BINFA *) malloc ((i + 1) * sizeof (BINFA))) == NULL)
-        {
-            return -1;
-        }
-
-    }
-    
-    for (int i = 0; i < nr; ++i)
-        for (int j = 0; j < i + 1; ++j)
-            tm[i][j].ertek = i * (i + 1) / 2 + j;
-
-    for (int i = 0; i < nr; ++i)
-    {
-        for (int j = 0; j < i + 1; ++j)
-            printf ("%d, ", tm[i][j].ertek);
-        printf ("\n");
-    }
-
-   
-    for (int i = 0; i < nr; ++i)
-    {
-        for (int j = 0; j < i + 1; ++j)
-            printf ("%d, ", tm[i][j].ertek);
-        printf ("\n");
-    }
-
-    for (int i = 0; i < nr; ++i)
-        free (tm[i]);
-
-    free (tm);
-
-    return 0;
-}
-            ]]>
-        </programlisting>
         <figure>
             <title>A <type>double **</type> háromszögmátrix a memóriában</title>
             <mediaobject>
@@ -203,6 +125,18 @@ main ()
             Futtatásához meg kell adnunk egy tiszta szöveget nevét és a cél fájl nevét és tipusát.
             A titkosítás módja az EXOR logikai művelet.
         </para>      
+	<para>
+	Elsőnek a kulcs méret és a buffer méretének maximumát konstansban tároljuk el, ezek nem módosíthatóak érdekessége hogy nem program futtatásakor
+        történik meg a behelyettesítés, hanem a már a fordítás alatt.
+	Az argc-vel adjuk át az argumentumok számát, és az argumentumokra mutató mutatókat pedig az argv tömbben tároljuk el.
+	A main()-en belül deklarálunk két tömböt, egyikbe a kulcsot tároljuk, a másikban pedig a beolvasott karaktereket.
+	Definiálunk számlálókat, melyek segítségével bejárjuk majd a kulcs tömböt, és számoljuk a beolvasott bájtokat.
+	A kulcsméretet a strncpy függvényel kapjuk meg.
+	A while cikluson feltétele addig lesz igaz, ameddig a read parancs beolvassa a megadott mennyiségű bájtokat. A read
+        3 argumentumot kap. A beolvasott bájtok számát adja vissza. Ezután pedig végigmegyünk elemenként a bufferben
+        eltárolt karaktereken és össze EXOR-ozzuk a kulcs tömb megfelelő elemével.
+        Végezetül pedig kiírjuk a buffer tartalmát a stabdard outputra.
+	</para>
         <para>
             A program futtatásához ezt a paracsot kell hasznalni:
             ./e 56789012  asd.txt asd.szoveg 
@@ -391,6 +325,18 @@ második sor]]>
              Feladatunk most hogy az előző feladatokban titkositott szövegeket visszadekódoljuk úgy hogy nem tudjuk az exor
              kulcsát csak azt tudjuk hogy a kulcs 8 karakter hosszú és csak számokat tartalmaz.
         </para>  
+	<para>
+	 Ismét konstansokat létrehozásával kezdünk, ebből a kulcs_meret érdekes, mert itt megadjuk hogy a kulcs csak 8 karakter hosszú
+	 így ez a program nem a leghatékonyabb a való életben.Az atlagos_szohossz azzal kiszámítjük a bemenet átlagos szóhosszát ennek odaadunk 
+	 egy tömböt és ennek a tömbnek a méretét.Ezután bejárjuk egy for ciklussal és minden elem után növeljük az sz értékét eggyel.Returnként 
+	 pedig tömbünk méretét elosztjuk az sz változóval.A tiszta_lehet átlagos szóhossz segítségével ellenőrzi hogy a beadot szöveg tiszta szöveg e.
+	 Az exor függvény ugyan azt csinálja az exor titkosító mivel ha egy exorozott forrást újra exorottuk akkor megkapjuk a tiszta szöveget.
+	 Az exor_tores 0 vagy 1-et ad vissza attól függően hogy tiszta e a szöveg vagy nem.Ezek után jön a main ebben csinálunk egy kulcs[] tömböt
+	 és egy titkos tömböt létrehozzunk egy mutatót ami a titkos tömbre mutat és behozzuk egy olvasott_bajtok számlálót.A while ciklussal addig 
+	megyünk míg a buffer meg nem tellik vagy a bemenet végére érünk. Következő for ciklussal kinullázzuk a buffer üres helyeit és öszeállítjuk a lehetséges 	 	külcsotkat.Utánna végig futtatjuk az összes lehetséges kulcsunkat a for ciklusokon és meghívjuk az exor törőt ami eldönti hogy a kikódolt szöveg tiszte e
+	vagy nem. Ha az eredmény igaz lesz azt kiírja egy txt fájlba.
+	 
+	</para>
         <para>
         Futtatási parancs:
         </para>
